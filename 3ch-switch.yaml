@@ -1,7 +1,13 @@
 substitutions:
   device_name: "mdtronix-3ch-switch"
   friendly_name: "MDtronix 3ch Switch"
-
+  relayPin_1: GPIO12
+  relayPin_2: GPIO14
+  relayPin_3: GPIO15
+  switchPin_1: GPIO5
+  switchPin_2: GPIO4
+  switchPin_3: GPIO13
+  statusLed: GPIO2
 esphome:
   name: ${device_name}
   friendly_name: ${friendly_name}
@@ -29,3 +35,95 @@ web_server:
 dashboard_import:
   package_import_url: github://mrunmaydarpan/ESPhome-configs/3ch-switch.yaml
   import_full_config: False
+
+binary_sensor:
+  - platform: status
+    name: "Status"
+    entity_category: diagnostic
+  - platform: gpio
+    id: switchID_1
+    pin:
+      number: $switchPin_1
+      mode: INPUT_PULLUP
+      inverted: True
+    on_state: 
+      then:
+        - switch.toggle: relayID_1
+    filters: 
+      - delayed_on_off: 100ms
+  - platform: gpio
+    id: switchID_2
+    pin:
+      number: $switchPin_2
+      mode: INPUT_PULLUP
+      inverted: True
+    on_state: 
+      then:
+        - switch.toggle: relayID_2
+    filters: 
+      - delayed_on_off: 100ms          
+  - platform: gpio
+    id: switchID_3
+    pin:
+      number: $switchPin_3
+      mode: INPUT_PULLUP
+      inverted: True
+    on_state: 
+      then:
+        - switch.toggle: relayID_3
+    filters: 
+      - delayed_on_off: 100ms
+switch:
+  - platform: gpio
+    pin: $relayPin_1
+    name: Switch 1
+    id: relayID_1
+    restore_mode: RESTORE_DEFAULT_ON
+  - platform: gpio
+    pin: $relayPin_2
+    name: Switch 2
+    id: relayID_2
+    restore_mode: RESTORE_DEFAULT_ON
+  - platform: gpio
+    name: Switch 3
+    pin: $relayPin_3
+    id: relayID_3
+    restore_mode: RESTORE_DEFAULT_ON        
+
+sensor:
+  - platform: uptime
+    name: "Uptime Sensor"
+    id: uptime_sensor
+    entity_category: diagnostic
+    internal: true
+
+  - platform: wifi_signal
+    name: "WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+
+  - platform: copy
+    source_id: wifi_signal_db
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "Signal %"
+    entity_category: "diagnostic"
+    device_class: ""
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      entity_category: diagnostic
+
+button:
+  - platform: restart
+    name: "Restart"
+    entity_category: config
+
+  - platform: factory_reset
+    name: "Factory Reset"
+    id: Reset
+    entity_category: config
