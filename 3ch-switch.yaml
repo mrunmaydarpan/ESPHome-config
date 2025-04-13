@@ -33,7 +33,7 @@ captive_portal:
 web_server:
   version: 3
 dashboard_import:
-  package_import_url: github://mrunmaydarpan/ESPhome-configs/3ch-switch.yaml
+  package_import_url: github://mrunmaydarpan/ESPhome-config/3ch-switch.yaml
   import_full_config: False
 
 binary_sensor:
