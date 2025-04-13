@@ -1,0 +1,31 @@
+substitutions:
+  device_name: "mdtronix-3ch-switch"
+  friendly_name: "MDtronix 3ch Switch"
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  name_add_mac_suffix: True
+  project: 
+    name: MDtronix.3ch-switch
+    version: "1.0"
+
+esp8266:
+  board: esp01_1m
+  restore_from_flash: True
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  - platform: esphome
+wifi:
+  ap:
+captive_portal:
+web_server:
+  version: 3
+dashboard_import:
+  package_import_url: github://mrunmaydarpan/ESPhome-configs/3ch-switch.yaml
+  import_full_config: False
